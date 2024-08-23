@@ -32,3 +32,31 @@ def generate_images(model, num_images, latent_dim, device, output_dir):
         plt.tight_layout()
         plt.savefig(f"{output_dir}/generated_grid.png", dpi=300)
         plt.close()
+
+def visualize_latent_space(model, dataloader, device, latent_dim, output_dir):
+    model.eval()
+    latents = []
+    labels = []
+    
+    with torch.no_grad():
+        for data in dataloader:
+            inputs = data.to(device)
+            mu, logvar = model.encode(inputs)
+            z = model.reparameterize(mu, logvar)
+            latents.append(z.cpu())
+            labels.append(torch.zeros(inputs.size(0)))
+    
+    latents = torch.cat(latents)
+    labels = torch.cat(labels)
+    
+    if latent_dim > 2:
+        from sklearn.decomposition import PCA
+        pca = PCA(n_components=2)
+        latents = pca.fit_transform(latents)
+    
+    plt.figure(figsize=(10, 10))
+    plt.scatter(latents[:, 0], latents[:, 1], c=labels, cmap='tab10', s=2)
+    plt.colorbar()
+    plt.title('Latent Space Visualization')
+    plt.savefig(f"{output_dir}/latent_space.png", dpi=300)
+    plt.close()

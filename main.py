@@ -9,7 +9,7 @@ from config import *
 from cnn_vae.model import CVAE
 from cnn_vae.dataset import RanjeetFaceDataset
 from cnn_vae.train import train
-from cnn_vae.utils import generate_images
+from cnn_vae.utils import generate_images, visualize_latent_space
 
 def main():
     torch.manual_seed(42)
@@ -36,6 +36,9 @@ def main():
         
     os.makedirs(output_dir, exist_ok=True)
     generate_images(model, num_images=64, latent_dim=latent_dim, device=device, output_dir=output_dir)
+
+    os.makedirs(latent_dir, exist_ok=True)
+    visualize_latent_space(model, dataloader, device, latent_dim, latent_dir)
     
     print(f"Generated images saved to {output_dir}")
 
