@@ -60,3 +60,20 @@ def visualize_latent_space(model, dataloader, device, latent_dim, output_dir):
     plt.title('Latent Space Visualization')
     plt.savefig(f"{output_dir}/latent_space.png", dpi=300)
     plt.close()
+
+def plot_loss_curve(train_losses, val_losses, save_dir='loss_curves', filename='loss_curve.png'):
+    epochs = range(1, len(train_losses) + 1)
+    plt.figure(figsize=(10, 6))
+    plt.plot(epochs, train_losses, 'bo-', label='Training Loss')
+    plt.plot(epochs, val_losses, 'r*-', label='Validation Loss')
+    plt.title('Training and Validation Loss Curve')
+    plt.xlabel('Epochs')
+    plt.ylabel('Loss')
+    plt.legend()
+    plt.grid(True)
+    
+    os.makedirs(save_dir, exist_ok=True)
+    save_path = os.path.join(save_dir, filename)
+    plt.savefig(save_path)
+
+    print(f"Loss curve saved to {save_path}")
